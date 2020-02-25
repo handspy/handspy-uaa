@@ -25,14 +25,14 @@
     "buildTool": "gradle",
     "serverPort": "9080",
     "jhipsterVersion": "6.7.1",
-    "creationTimestamp": 1582480320123,
+    "creationTimestamp": 1582488840725,
     "skipUserManagement": false,
     "clientPackageManager": "npm",
     "embeddableLaunchScript": false,
     "entitySuffix": "",
     "dtoSuffix": "DTO",
-    "otherModules": [],
-    "blueprints": []
+    "blueprints": [],
+    "otherModules": []
   },
   "entities": []
 }

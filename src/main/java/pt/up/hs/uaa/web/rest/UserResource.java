@@ -184,6 +184,8 @@ public class UserResource {
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUser(login);
-        return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName,  "userManagement.deleted", login)).build();
+        return ResponseEntity.noContent()
+            .headers(HeaderUtil.createAlert(applicationName,  "userManagement.deleted", login))
+            .build();
     }
 }

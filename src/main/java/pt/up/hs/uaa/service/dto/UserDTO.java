@@ -28,6 +28,9 @@ public class UserDTO {
     @Size(max = 50)
     private String lastName;
 
+    @Size(max = 200)
+    private String organization;
+
     @Email
     @Size(min = 5, max = 254)
     private String email;
@@ -59,6 +62,7 @@ public class UserDTO {
         this.login = user.getLogin();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.organization = user.getOrganization();
         this.email = user.getEmail();
         this.activated = user.getActivated();
         this.imageUrl = user.getImageUrl();
@@ -110,6 +114,14 @@ public class UserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
     public String getImageUrl() {
@@ -183,6 +195,7 @@ public class UserDTO {
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +
+            ", organization='" + organization + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
             ", activated=" + activated +
             ", langKey='" + langKey + '\'' +

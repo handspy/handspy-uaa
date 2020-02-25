@@ -119,7 +119,7 @@ public class AccountResourceIT {
     public void testRegisterValid() throws Exception {
         ManagedUserVM validUser = new ManagedUserVM();
         validUser.setLogin("test-register-valid");
-        validUser.setPassword("password");
+        validUser.setPassword("Passw0rd.");
         validUser.setFirstName("Alice");
         validUser.setLastName("Test");
         validUser.setEmail("test-register-valid@example.com");
@@ -244,7 +244,7 @@ public class AccountResourceIT {
         // First registration
         ManagedUserVM firstUser = new ManagedUserVM();
         firstUser.setLogin("alice");
-        firstUser.setPassword("password");
+        firstUser.setPassword("Passw0rd.");
         firstUser.setFirstName("Alice");
         firstUser.setLastName("Something");
         firstUser.setEmail("alice@example.com");
@@ -303,7 +303,7 @@ public class AccountResourceIT {
         // First user
         ManagedUserVM firstUser = new ManagedUserVM();
         firstUser.setLogin("test-register-duplicate-email");
-        firstUser.setPassword("password");
+        firstUser.setPassword("Passw0rd.");
         firstUser.setFirstName("Alice");
         firstUser.setLastName("Test");
         firstUser.setEmail("test-register-duplicate-email@example.com");
@@ -388,7 +388,7 @@ public class AccountResourceIT {
     public void testRegisterAdminIsIgnored() throws Exception {
         ManagedUserVM validUser = new ManagedUserVM();
         validUser.setLogin("badguy");
-        validUser.setPassword("password");
+        validUser.setPassword("Passw0rd.");
         validUser.setFirstName("Bad");
         validUser.setLastName("Guy");
         validUser.setEmail("badguy@example.com");

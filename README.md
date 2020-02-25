@@ -1,11 +1,6 @@
-# uaa
+# HandSpy UAA Microservice
 
-This application was generated using JHipster 6.7.1, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.7.1](https://www.jhipster.tech/documentation-archive/v6.7.1).
-
-This is a "uaa" application intended to be part of a microservice architecture, please refer to the [Doing microservices with JHipster][] page of the documentation for more information.
-
-This is also a JHipster User Account and Authentication (UAA) Server, refer to [Using UAA for Microservice Security][] for details on how to secure JHipster microservices with OAuth2.
-This application is configured for Service Discovery and Configuration with the JHipster-Registry. On launch, it will refuse to start if it is not able to connect to the JHipster-Registry at [http://localhost:8761](http://localhost:8761). For more information, read our documentation on [Service Discovery and Configuration with the JHipster-Registry][].
+This application is the User Account and Authentication (UAA) microservice of HandSpy.
 
 ## Development
 
@@ -83,19 +78,3 @@ Then run:
     docker-compose -f src/main/docker/app.yml up -d
 
 For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
-
-[jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 6.7.1 archive]: https://www.jhipster.tech/documentation-archive/v6.7.1
-[doing microservices with jhipster]: https://www.jhipster.tech/documentation-archive/v6.7.1/microservices-architecture/
-
-[Using UAA for Microservice Security]: https://www.jhipster.tech/documentation-archive/v6.7.1/using-uaa/[Using JHipster in development]: https://www.jhipster.tech/documentation-archive/v6.7.1/development/
-[Service Discovery and Configuration with the JHipster-Registry]: https://www.jhipster.tech/documentation-archive/v6.7.1/microservices-architecture/#jhipster-registry
-[Using Docker and Docker-Compose]: https://www.jhipster.tech/documentation-archive/v6.7.1/docker-compose
-[Using JHipster in production]: https://www.jhipster.tech/documentation-archive/v6.7.1/production/
-[Running tests page]: https://www.jhipster.tech/documentation-archive/v6.7.1/running-tests/
-[Code quality page]: https://www.jhipster.tech/documentation-archive/v6.7.1/code-quality/
-[Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/v6.7.1/setting-up-ci/

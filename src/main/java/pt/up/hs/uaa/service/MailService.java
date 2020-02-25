@@ -73,29 +73,36 @@ public class MailService {
 
     @Async
     public void sendEmailFromTemplate(User user, String templateName, String titleKey) {
+        sendEmailFromTemplate(user, templateName, titleKey, null);
+    }
+
+    @Async
+    public void sendEmailFromTemplate(User user, String templateName, String titleKey, String[] titleArgs) {
         if (user.getEmail() == null) {
             log.debug("Email doesn't exist for user '{}'", user.getLogin());
             return;
         }
-        Locale locale = Locale.forLanguageTag(user.getLangKey());
+        Locale locale = user.getLangKey() == null ? Locale.getDefault() : Locale.forLanguageTag(user.getLangKey());
         Context context = new Context(locale);
         context.setVariable(USER, user);
         context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
         String content = templateEngine.process(templateName, context);
-        String subject = messageSource.getMessage(titleKey, null, locale);
+        String subject = messageSource.getMessage(titleKey, titleArgs, locale);
         sendEmail(user.getEmail(), subject, content, false, true);
     }
 
     @Async
     public void sendActivationEmail(User user) {
         log.debug("Sending activation email to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "mail/activationEmail", "email.activation.title");
+        sendEmailFromTemplate(user, "mail/activationEmail", "email.activation.title",
+            new String[] { user.getFirstName(), user.getLastName() });
     }
 
     @Async
     public void sendCreationEmail(User user) {
         log.debug("Sending creation email to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "mail/creationEmail", "email.activation.title");
+        sendEmailFromTemplate(user, "mail/creationEmail", "email.creation.title",
+            new String[] { user.getFirstName(), user.getLastName() });
     }
 
     @Async

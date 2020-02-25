@@ -115,7 +115,8 @@ public class AccountResource {
      */
     @PostMapping("/account")
     public void saveAccount(@Valid @RequestBody UserDTO userDTO) {
-        String userLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new AccountResourceException("Current user login not found"));
+        String userLogin = SecurityUtils.getCurrentUserLogin()
+            .orElseThrow(() -> new AccountResourceException("Current user login not found"));
         Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))) {
             throw new EmailAlreadyUsedException();
@@ -124,8 +125,8 @@ public class AccountResource {
         if (!user.isPresent()) {
             throw new AccountResourceException("User could not be found");
         }
-        userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
-            userDTO.getLangKey(), userDTO.getImageUrl());
+        userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getOrganization(),
+            userDTO.getEmail(), userDTO.getLangKey(), userDTO.getImageUrl());
     }
 
     /**
@@ -139,7 +140,10 @@ public class AccountResource {
         if (!checkPasswordLength(passwordChangeDto.getNewPassword())) {
             throw new InvalidPasswordException();
         }
-        userService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
+        userService.changePassword(
+            passwordChangeDto.getCurrentPassword(),
+            passwordChangeDto.getNewPassword()
+        );
     }
 
     /**

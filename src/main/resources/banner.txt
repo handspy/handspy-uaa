@@ -1,10 +1,11 @@
 
-  ${AnsiColor.GREEN}      ██╗${AnsiColor.RED} ██╗   ██╗ ████████╗ ███████╗   ██████╗ ████████╗ ████████╗ ███████╗
-  ${AnsiColor.GREEN}      ██║${AnsiColor.RED} ██║   ██║ ╚══██╔══╝ ██╔═══██╗ ██╔════╝ ╚══██╔══╝ ██╔═════╝ ██╔═══██╗
-  ${AnsiColor.GREEN}      ██║${AnsiColor.RED} ████████║    ██║    ███████╔╝ ╚█████╗     ██║    ██████╗   ███████╔╝
-  ${AnsiColor.GREEN}██╗   ██║${AnsiColor.RED} ██╔═══██║    ██║    ██╔════╝   ╚═══██╗    ██║    ██╔═══╝   ██╔══██║
-  ${AnsiColor.GREEN}╚██████╔╝${AnsiColor.RED} ██║   ██║ ████████╗ ██║       ██████╔╝    ██║    ████████╗ ██║  ╚██╗
-  ${AnsiColor.GREEN} ╚═════╝ ${AnsiColor.RED} ╚═╝   ╚═╝ ╚═══════╝ ╚═╝       ╚═════╝     ╚═╝    ╚═══════╝ ╚═╝   ╚═╝
+    ${AnsiColor.GREEN}██╗  ██╗${AnsiColor.BLACK} █████╗ ███╗   ██╗██████╗ ${AnsiColor.GREEN}███████╗${AnsiColor.BLACK}██████╗ ██╗   ██╗
+    ${AnsiColor.GREEN}██║  ██║${AnsiColor.BLACK}██╔══██╗████╗  ██║██╔══██╗${AnsiColor.GREEN}██╔════╝${AnsiColor.BLACK}██╔══██╗╚██╗ ██╔╝
+    ${AnsiColor.GREEN}███████║${AnsiColor.BLACK}███████║██╔██╗ ██║██║  ██║${AnsiColor.GREEN}███████╗${AnsiColor.BLACK}██████╔╝ ╚████╔╝
+    ${AnsiColor.GREEN}██╔══██║${AnsiColor.BLACK}██╔══██║██║╚██╗██║██║  ██║${AnsiColor.GREEN}╚════██║${AnsiColor.BLACK}██╔═══╝   ╚██╔╝
+    ${AnsiColor.GREEN}██║  ██║${AnsiColor.BLACK}██║  ██║██║ ╚████║██████╔╝${AnsiColor.GREEN}███████║${AnsiColor.BLACK}██║        ██║
+    ${AnsiColor.GREEN}╚═╝  ╚═╝${AnsiColor.BLACK}╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ${AnsiColor.GREEN}╚══════╝${AnsiColor.BLACK}╚═╝        ╚═╝
 
-${AnsiColor.BRIGHT_BLUE}:: JHipster 🤓  :: Running Spring Boot ${spring-boot.version} ::
-:: https://www.jhipster.tech ::${AnsiColor.DEFAULT}
+
+${AnsiColor.BRIGHT_BLUE}:: HandSpy 🤓  :: Running Spring Boot ${spring-boot.version} ::
+:: https://handspy.up.pt ::${AnsiColor.DEFAULT}
