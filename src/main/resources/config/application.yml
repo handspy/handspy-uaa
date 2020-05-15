@@ -106,6 +106,29 @@ spring:
   mvc:
     favicon:
       enabled: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 445203455803-b56ivoe9cjr44u6bkqo42fscra1e9gh4.apps.googleusercontent.com
+            client-secret: v74FeXhsQtp1UO3z1yjL_bF7
+            redirect-uri-template: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+          facebook:
+            client-id: 121189305185277
+            client-secret: 42ffe5aa7379e8326387e0fe16f34132
+            redirect-uri-template: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - public_profile
+        provider:
+          facebook:
+            authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
+            tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
+            userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
   task:
     execution:
       thread-name-prefix: uaa-task-
@@ -163,18 +186,18 @@ jhipster:
   #     allow-credentials: true
   #     max-age: 1800
   mail:
-    from: uaa@localhost
+    from: support@handspy.up.pt
   swagger:
     default-include-pattern: /api/.*
-    title: uaa API
-    description: uaa API documentation
+    title: HandSpy UAA Microservice API
+    description: HandSpy UAA Microservice API documentation
     version: 0.0.1
-    terms-of-service-url:
-    contact-name:
-    contact-url:
-    contact-email:
-    license:
-    license-url:
+    terms-of-service-url: https://handspy.up.pt/terms-of-service
+    contact-name: HandSpy Support Team
+    contact-url: https://handspy.up.pt/contact
+    contact-email: support@handspy.up.pt
+    license: GNU GPLv3
+    license-url: https://www.gnu.org/licenses/gpl-3.0.html
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
@@ -184,4 +207,6 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  oauth2:
+    authorized-redirect-uri: http://localhost:4200/oauth2/redirect

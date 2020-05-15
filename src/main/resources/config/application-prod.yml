@@ -69,10 +69,19 @@ spring:
   liquibase:
     contexts: prod
   mail:
-    host: localhost
-    port: 25
-    username:
-    password:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: aa23f383ca494a
+    password: e811e85c6ef2b4
+    protocol: smtp
+    tls: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.mailtrap.io
+      connectiontimeout: 60000
+      timeout: 60000
+      writetimeout: 60000
   thymeleaf:
     cache: true
   sleuth:
@@ -140,7 +149,7 @@ jhipster:
         # Refresh Token is valid for 7 days
         token-validity-in-seconds-for-remember-me: 252000
   mail: # specific JHipster mail property, for standard properties see MailProperties
-    base-url: http://my-server-url-to-change # Modify according to your server's URL
+    base-url: http://localhost:4200 # Modify according to your server's URL
   metrics:
     logs: # Reports metrics in the logs
       enabled: false

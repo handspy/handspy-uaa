@@ -98,6 +98,20 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
 
+    /* OAuth2 Providers */
+
+    @Size(max = 50)
+    @Column(name = "google_id", length = 50)
+    private String googleId = null;
+
+    @Size(max = 50)
+    @Column(name = "twitter_id", length = 50)
+    private String twitterId = null;
+
+    @Size(max = 50)
+    @Column(name = "facebook_id", length = 50)
+    private String facebookId = null;
+
     public Long getId() {
         return id;
     }
@@ -211,6 +225,30 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.authorities = authorities;
     }
 
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public String getTwitterId() {
+        return twitterId;
+    }
+
+    public void setTwitterId(String twitterId) {
+        this.twitterId = twitterId;
+    }
+
+    public String getFacebookId() {
+        return facebookId;
+    }
+
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -239,6 +277,9 @@ public class User extends AbstractAuditingEntity implements Serializable {
             ", activated='" + activated + '\'' +
             ", langKey='" + langKey + '\'' +
             ", activationKey='" + activationKey + '\'' +
+            ", googleId='" + googleId + '\'' +
+            ", twitterId='" + twitterId + '\'' +
+            ", facebookId='" + facebookId + '\'' +
             "}";
     }
 }
