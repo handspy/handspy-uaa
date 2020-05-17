@@ -1,5 +1,9 @@
 package pt.up.hs.uaa.config;
 
+import pt.up.hs.uaa.oauth2.CustomOAuth2UserService;
+import pt.up.hs.uaa.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import pt.up.hs.uaa.oauth2.OAuth2AuthenticationFailureHandler;
+import pt.up.hs.uaa.oauth2.OAuth2AuthenticationSuccessHandler;
 import pt.up.hs.uaa.security.AuthoritiesConstants;
 import io.github.jhipster.config.JHipsterProperties;
 import org.springframework.beans.BeansException;
@@ -60,10 +64,28 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
 
         private final CorsFilter corsFilter;
 
-        public ResourceServerConfiguration(TokenStore tokenStore, JHipsterProperties jHipsterProperties, CorsFilter corsFilter) {
+        private CustomOAuth2UserService customOAuth2UserService;
+        private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+        private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+        private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+
+        public ResourceServerConfiguration(
+            TokenStore tokenStore,
+            JHipsterProperties jHipsterProperties,
+            CorsFilter corsFilter,
+            CustomOAuth2UserService customOAuth2UserService,
+            OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
+            OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler,
+            HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository
+        ) {
             this.tokenStore = tokenStore;
             this.jHipsterProperties = jHipsterProperties;
             this.corsFilter = corsFilter;
+
+            this.customOAuth2UserService = customOAuth2UserService;
+            this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
+            this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
+            this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
         }
 
         @Override
@@ -93,12 +115,36 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
                 .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
                 .antMatchers("/v2/api-docs/**").permitAll()
                 .antMatchers("/swagger-resources/configuration/ui").permitAll()
-                .antMatchers("/swagger-ui/index.html").hasAuthority(AuthoritiesConstants.ADMIN);
+                .antMatchers("/swagger-ui/index.html").hasAuthority(AuthoritiesConstants.ADMIN)
+            .and()
+            .oauth2Login()
+                .authorizationEndpoint()
+                    .baseUri("/oauth2/authorize")
+                    .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                .and()
+                .redirectionEndpoint()
+                    .baseUri("/oauth2/callback/*")
+                .and()
+                .userInfoEndpoint()
+                    .userService(customOAuth2UserService)
+                .and()
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler);
         }
 
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
             resources.resourceId("jhipster-uaa").tokenStore(tokenStore);
+        }
+
+        /*
+          By default, Spring OAuth2 uses HttpSessionOAuth2AuthorizationRequestRepository to save
+          the authorization request. But, since our service is stateless, we can't save it in
+          the session. We'll save the request in a Base64 encoded cookie instead.
+        */
+        @Bean
+        public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+            return new HttpCookieOAuth2AuthorizationRequestRepository();
         }
     }
 
@@ -108,7 +154,11 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
 
     private final PasswordEncoder passwordEncoder;
 
-    public UaaConfiguration(JHipsterProperties jHipsterProperties, UaaProperties uaaProperties, PasswordEncoder passwordEncoder) {
+    public UaaConfiguration(
+        JHipsterProperties jHipsterProperties,
+        UaaProperties uaaProperties,
+        PasswordEncoder passwordEncoder
+    ) {
         this.jHipsterProperties = jHipsterProperties;
         this.uaaProperties = uaaProperties;
         this.passwordEncoder = passwordEncoder;
@@ -128,7 +178,7 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
             .secret(passwordEncoder.encode(uaaProperties.getWebClientConfiguration().getSecret()))
             .scopes("openid")
             .autoApprove(true)
-            .authorizedGrantTypes("implicit","refresh_token", "password", "authorization_code")
+            .authorizedGrantTypes("implicit", "refresh_token", "password", "authorization_code")
             .accessTokenValiditySeconds(accessTokenValidity)
             .refreshTokenValiditySeconds(refreshTokenValidity)
             .and()

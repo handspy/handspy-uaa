@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import pt.up.hs.uaa.web.rest.vm.OAuth2LoginVM;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -65,6 +66,11 @@ public class AccountResource {
         }
         User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
         mailService.sendActivationEmail(user);
+    }
+
+    @PostMapping("/oauth2-connect")
+    public void signInWithOAuth2Provider(@Valid @RequestBody OAuth2LoginVM oAuth2LoginVM) {
+
     }
 
     /**
