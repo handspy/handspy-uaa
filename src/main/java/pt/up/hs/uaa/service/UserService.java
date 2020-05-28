@@ -77,7 +77,11 @@ public class UserService {
     }
 
     public Optional<User> requestPasswordReset(String mail) {
-        return userRepository.findOneByEmailIgnoreCase(mail)
+        Optional<User> userOptional = userRepository.findOneByLogin(mail.toLowerCase());
+        if (!userOptional.isPresent()) {
+            userOptional = userRepository.findOneByEmailIgnoreCase(mail);
+        }
+        return userOptional
             .filter(User::getActivated)
             .map(user -> {
                 user.setResetKey(RandomUtil.generateResetKey());
