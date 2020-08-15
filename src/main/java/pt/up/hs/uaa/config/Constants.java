@@ -1,5 +1,8 @@
 package pt.up.hs.uaa.config;
 
+import pt.up.hs.uaa.domain.LengthUnit;
+import pt.up.hs.uaa.domain.TimeUnit;
+
 /**
  * Application constants.
  */
@@ -13,6 +16,8 @@ public final class Constants {
 
     public static final String SYSTEM_ACCOUNT = "system";
     public static final String DEFAULT_LANGUAGE = "en";
+    public static final LengthUnit DEFAULT_LENGTH_UNIT = LengthUnit.MM;
+    public static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MS;
     public static final String ANONYMOUS_USER = "anonymoususer";
 
     private Constants() {

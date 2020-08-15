@@ -2,6 +2,8 @@ package pt.up.hs.uaa.web.rest;
 
 import pt.up.hs.uaa.UaaApp;
 import pt.up.hs.uaa.domain.Authority;
+import pt.up.hs.uaa.domain.LengthUnit;
+import pt.up.hs.uaa.domain.TimeUnit;
 import pt.up.hs.uaa.domain.User;
 import pt.up.hs.uaa.repository.UserRepository;
 import pt.up.hs.uaa.security.AuthoritiesConstants;
@@ -63,6 +65,12 @@ public class UserResourceIT {
     private static final String DEFAULT_LANGKEY = "en";
     private static final String UPDATED_LANGKEY = "fr";
 
+    private static final LengthUnit DEFAULT_LENGTH_UNIT = LengthUnit.MM;
+    private static final LengthUnit UPDATED_LENGTH_UNIT = LengthUnit.IN;
+
+    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MS;
+    private static final TimeUnit UPDATED_TIME_UNIT = TimeUnit.S;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -102,6 +110,8 @@ public class UserResourceIT {
         user.setLastName(DEFAULT_LASTNAME);
         user.setImageUrl(DEFAULT_IMAGEURL);
         user.setLangKey(DEFAULT_LANGKEY);
+        user.setLengthUnit(DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(DEFAULT_TIME_UNIT);
         return user;
     }
 
@@ -127,6 +137,8 @@ public class UserResourceIT {
         managedUserVM.setActivated(true);
         managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
         managedUserVM.setLangKey(DEFAULT_LANGKEY);
+        managedUserVM.setLengthUnit(DEFAULT_LENGTH_UNIT);
+        managedUserVM.setTimeUnit(DEFAULT_TIME_UNIT);
         managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
         restUserMockMvc.perform(post("/api/users")
@@ -145,6 +157,8 @@ public class UserResourceIT {
             assertThat(testUser.getEmail()).isEqualTo(DEFAULT_EMAIL);
             assertThat(testUser.getImageUrl()).isEqualTo(DEFAULT_IMAGEURL);
             assertThat(testUser.getLangKey()).isEqualTo(DEFAULT_LANGKEY);
+            assertThat(testUser.getLengthUnit()).isEqualTo(DEFAULT_LENGTH_UNIT);
+            assertThat(testUser.getTimeUnit()).isEqualTo(DEFAULT_TIME_UNIT);
         });
     }
 
@@ -163,6 +177,8 @@ public class UserResourceIT {
         managedUserVM.setActivated(true);
         managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
         managedUserVM.setLangKey(DEFAULT_LANGKEY);
+        managedUserVM.setLengthUnit(DEFAULT_LENGTH_UNIT);
+        managedUserVM.setTimeUnit(DEFAULT_TIME_UNIT);
         managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -192,6 +208,8 @@ public class UserResourceIT {
         managedUserVM.setActivated(true);
         managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
         managedUserVM.setLangKey(DEFAULT_LANGKEY);
+        managedUserVM.setLengthUnit(DEFAULT_LENGTH_UNIT);
+        managedUserVM.setTimeUnit(DEFAULT_TIME_UNIT);
         managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
         // Create the User
@@ -221,6 +239,8 @@ public class UserResourceIT {
         managedUserVM.setActivated(true);
         managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
         managedUserVM.setLangKey(DEFAULT_LANGKEY);
+        managedUserVM.setLengthUnit(DEFAULT_LENGTH_UNIT);
+        managedUserVM.setTimeUnit(DEFAULT_TIME_UNIT);
         managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
         // Create the User
@@ -250,7 +270,9 @@ public class UserResourceIT {
             .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LASTNAME)))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
             .andExpect(jsonPath("$.[*].imageUrl").value(hasItem(DEFAULT_IMAGEURL)))
-            .andExpect(jsonPath("$.[*].langKey").value(hasItem(DEFAULT_LANGKEY)));
+            .andExpect(jsonPath("$.[*].langKey").value(hasItem(DEFAULT_LANGKEY)))
+            .andExpect(jsonPath("$.[*].lengthUnit").value(hasItem(DEFAULT_LENGTH_UNIT.name())))
+            .andExpect(jsonPath("$.[*].timeUnit").value(hasItem(DEFAULT_TIME_UNIT.name())));
     }
 
     @Test
@@ -270,7 +292,9 @@ public class UserResourceIT {
             .andExpect(jsonPath("$.lastName").value(DEFAULT_LASTNAME))
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
             .andExpect(jsonPath("$.imageUrl").value(DEFAULT_IMAGEURL))
-            .andExpect(jsonPath("$.langKey").value(DEFAULT_LANGKEY));
+            .andExpect(jsonPath("$.langKey").value(DEFAULT_LANGKEY))
+            .andExpect(jsonPath("$.lengthUnit").value(DEFAULT_LENGTH_UNIT.name()))
+            .andExpect(jsonPath("$.timeUnit").value(DEFAULT_TIME_UNIT.name()));
 
         assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).get(user.getLogin())).isNotNull();
     }
@@ -302,6 +326,8 @@ public class UserResourceIT {
         managedUserVM.setActivated(updatedUser.getActivated());
         managedUserVM.setImageUrl(UPDATED_IMAGEURL);
         managedUserVM.setLangKey(UPDATED_LANGKEY);
+        managedUserVM.setLengthUnit(UPDATED_LENGTH_UNIT);
+        managedUserVM.setTimeUnit(UPDATED_TIME_UNIT);
         managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
         managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
         managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());
@@ -323,6 +349,8 @@ public class UserResourceIT {
             assertThat(testUser.getEmail()).isEqualTo(UPDATED_EMAIL);
             assertThat(testUser.getImageUrl()).isEqualTo(UPDATED_IMAGEURL);
             assertThat(testUser.getLangKey()).isEqualTo(UPDATED_LANGKEY);
+            assertThat(testUser.getLengthUnit()).isEqualTo(UPDATED_LENGTH_UNIT);
+            assertThat(testUser.getTimeUnit()).isEqualTo(UPDATED_TIME_UNIT);
         });
     }
 
@@ -346,6 +374,8 @@ public class UserResourceIT {
         managedUserVM.setActivated(updatedUser.getActivated());
         managedUserVM.setImageUrl(UPDATED_IMAGEURL);
         managedUserVM.setLangKey(UPDATED_LANGKEY);
+        managedUserVM.setLengthUnit(UPDATED_LENGTH_UNIT);
+        managedUserVM.setTimeUnit(UPDATED_TIME_UNIT);
         managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
         managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
         managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());
@@ -368,6 +398,8 @@ public class UserResourceIT {
             assertThat(testUser.getEmail()).isEqualTo(UPDATED_EMAIL);
             assertThat(testUser.getImageUrl()).isEqualTo(UPDATED_IMAGEURL);
             assertThat(testUser.getLangKey()).isEqualTo(UPDATED_LANGKEY);
+            assertThat(testUser.getLengthUnit()).isEqualTo(UPDATED_LENGTH_UNIT);
+            assertThat(testUser.getTimeUnit()).isEqualTo(UPDATED_TIME_UNIT);
         });
     }
 
@@ -386,6 +418,8 @@ public class UserResourceIT {
         anotherUser.setLastName("hipster");
         anotherUser.setImageUrl("");
         anotherUser.setLangKey("en");
+        anotherUser.setLengthUnit(DEFAULT_LENGTH_UNIT);
+        anotherUser.setTimeUnit(DEFAULT_TIME_UNIT);
         userRepository.saveAndFlush(anotherUser);
 
         // Update the user
@@ -429,6 +463,8 @@ public class UserResourceIT {
         anotherUser.setLastName("hipster");
         anotherUser.setImageUrl("");
         anotherUser.setLangKey("en");
+        anotherUser.setLengthUnit(DEFAULT_LENGTH_UNIT);
+        anotherUser.setTimeUnit(DEFAULT_TIME_UNIT);
         userRepository.saveAndFlush(anotherUser);
 
         // Update the user
@@ -444,6 +480,8 @@ public class UserResourceIT {
         managedUserVM.setActivated(updatedUser.getActivated());
         managedUserVM.setImageUrl(updatedUser.getImageUrl());
         managedUserVM.setLangKey(updatedUser.getLangKey());
+        managedUserVM.setLengthUnit(updatedUser.getLengthUnit());
+        managedUserVM.setTimeUnit(updatedUser.getTimeUnit());
         managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
         managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
         managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());

@@ -2,6 +2,8 @@ package pt.up.hs.uaa.web.rest;
 
 import pt.up.hs.uaa.UaaApp;
 import pt.up.hs.uaa.config.Constants;
+import pt.up.hs.uaa.domain.LengthUnit;
+import pt.up.hs.uaa.domain.TimeUnit;
 import pt.up.hs.uaa.domain.User;
 import pt.up.hs.uaa.repository.AuthorityRepository;
 import pt.up.hs.uaa.repository.UserRepository;
@@ -42,6 +44,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = UaaApp.class)
 public class AccountResourceIT {
     static final String TEST_USER_LOGIN = "test";
+
+    private static final LengthUnit DEFAULT_LENGTH_UNIT = LengthUnit.MM;
+
+    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MS;
 
     @Autowired
     private UserRepository userRepository;
@@ -91,6 +97,8 @@ public class AccountResourceIT {
         user.setEmail("john.doe@jhipster.com");
         user.setImageUrl("http://placehold.it/50x50");
         user.setLangKey("en");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         user.setAuthorities(authorities);
         userService.createUser(user);
 
@@ -104,6 +112,8 @@ public class AccountResourceIT {
             .andExpect(jsonPath("$.email").value("john.doe@jhipster.com"))
             .andExpect(jsonPath("$.imageUrl").value("http://placehold.it/50x50"))
             .andExpect(jsonPath("$.langKey").value("en"))
+            .andExpect(jsonPath("$.lengthUnit").value(Constants.DEFAULT_LENGTH_UNIT.toString()))
+            .andExpect(jsonPath("$.timeUnit").value(Constants.DEFAULT_TIME_UNIT.toString()))
             .andExpect(jsonPath("$.authorities").value(AuthoritiesConstants.ADMIN));
     }
 
@@ -125,6 +135,8 @@ public class AccountResourceIT {
         validUser.setEmail("test-register-valid@example.com");
         validUser.setImageUrl("http://placehold.it/50x50");
         validUser.setLangKey(Constants.DEFAULT_LANGUAGE);
+        validUser.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        validUser.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         validUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
         assertThat(userRepository.findOneByLogin("test-register-valid").isPresent()).isFalse();
 
@@ -150,6 +162,8 @@ public class AccountResourceIT {
         invalidUser.setActivated(true);
         invalidUser.setImageUrl("http://placehold.it/50x50");
         invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
+        invalidUser.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        invalidUser.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
         restAccountMockMvc.perform(
@@ -175,6 +189,8 @@ public class AccountResourceIT {
         invalidUser.setActivated(true);
         invalidUser.setImageUrl("http://placehold.it/50x50");
         invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
+        invalidUser.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        invalidUser.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
         restAccountMockMvc.perform(
@@ -200,6 +216,8 @@ public class AccountResourceIT {
         invalidUser.setActivated(true);
         invalidUser.setImageUrl("http://placehold.it/50x50");
         invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
+        invalidUser.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        invalidUser.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
         restAccountMockMvc.perform(
@@ -225,6 +243,8 @@ public class AccountResourceIT {
         invalidUser.setActivated(true);
         invalidUser.setImageUrl("http://placehold.it/50x50");
         invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
+        invalidUser.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        invalidUser.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
         restAccountMockMvc.perform(
@@ -250,6 +270,8 @@ public class AccountResourceIT {
         firstUser.setEmail("alice@example.com");
         firstUser.setImageUrl("http://placehold.it/50x50");
         firstUser.setLangKey(Constants.DEFAULT_LANGUAGE);
+        firstUser.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        firstUser.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         firstUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
         // Duplicate login, different email
@@ -261,6 +283,8 @@ public class AccountResourceIT {
         secondUser.setEmail("alice2@example.com");
         secondUser.setImageUrl(firstUser.getImageUrl());
         secondUser.setLangKey(firstUser.getLangKey());
+        secondUser.setLengthUnit(firstUser.getLengthUnit());
+        secondUser.setTimeUnit(firstUser.getTimeUnit());
         secondUser.setCreatedBy(firstUser.getCreatedBy());
         secondUser.setCreatedDate(firstUser.getCreatedDate());
         secondUser.setLastModifiedBy(firstUser.getLastModifiedBy());
@@ -309,6 +333,8 @@ public class AccountResourceIT {
         firstUser.setEmail("test-register-duplicate-email@example.com");
         firstUser.setImageUrl("http://placehold.it/50x50");
         firstUser.setLangKey(Constants.DEFAULT_LANGUAGE);
+        firstUser.setLengthUnit(DEFAULT_LENGTH_UNIT);
+        firstUser.setTimeUnit(DEFAULT_TIME_UNIT);
         firstUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
         // Register first user
@@ -331,6 +357,8 @@ public class AccountResourceIT {
         secondUser.setEmail(firstUser.getEmail());
         secondUser.setImageUrl(firstUser.getImageUrl());
         secondUser.setLangKey(firstUser.getLangKey());
+        secondUser.setLengthUnit(firstUser.getLengthUnit());
+        secondUser.setTimeUnit(firstUser.getTimeUnit());
         secondUser.setAuthorities(new HashSet<>(firstUser.getAuthorities()));
 
         // Register second (non activated) user
@@ -357,6 +385,8 @@ public class AccountResourceIT {
         userWithUpperCaseEmail.setEmail("TEST-register-duplicate-email@example.com");
         userWithUpperCaseEmail.setImageUrl(firstUser.getImageUrl());
         userWithUpperCaseEmail.setLangKey(firstUser.getLangKey());
+        userWithUpperCaseEmail.setLengthUnit(firstUser.getLengthUnit());
+        userWithUpperCaseEmail.setTimeUnit(firstUser.getTimeUnit());
         userWithUpperCaseEmail.setAuthorities(new HashSet<>(firstUser.getAuthorities()));
 
         // Register third (not activated) user
@@ -417,6 +447,8 @@ public class AccountResourceIT {
         User user = new User();
         user.setLogin("activate-account");
         user.setEmail("activate-account@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         user.setPassword(RandomStringUtils.random(60));
         user.setActivated(false);
         user.setActivationKey(activationKey);
@@ -444,6 +476,8 @@ public class AccountResourceIT {
         User user = new User();
         user.setLogin("save-account");
         user.setEmail("save-account@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         user.setPassword(RandomStringUtils.random(60));
         user.setActivated(true);
 
@@ -457,6 +491,8 @@ public class AccountResourceIT {
         userDTO.setActivated(false);
         userDTO.setImageUrl("http://placehold.it/50x50");
         userDTO.setLangKey(Constants.DEFAULT_LANGUAGE);
+        userDTO.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        userDTO.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
 
         restAccountMockMvc.perform(
@@ -471,6 +507,8 @@ public class AccountResourceIT {
         assertThat(updatedUser.getLastName()).isEqualTo(userDTO.getLastName());
         assertThat(updatedUser.getEmail()).isEqualTo(userDTO.getEmail());
         assertThat(updatedUser.getLangKey()).isEqualTo(userDTO.getLangKey());
+        assertThat(updatedUser.getLengthUnit()).isEqualTo(userDTO.getLengthUnit());
+        assertThat(updatedUser.getTimeUnit()).isEqualTo(userDTO.getTimeUnit());
         assertThat(updatedUser.getPassword()).isEqualTo(user.getPassword());
         assertThat(updatedUser.getImageUrl()).isEqualTo(userDTO.getImageUrl());
         assertThat(updatedUser.getActivated()).isEqualTo(true);
@@ -484,6 +522,8 @@ public class AccountResourceIT {
         User user = new User();
         user.setLogin("save-invalid-email");
         user.setEmail("save-invalid-email@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         user.setPassword(RandomStringUtils.random(60));
         user.setActivated(true);
 
@@ -497,6 +537,8 @@ public class AccountResourceIT {
         userDTO.setActivated(false);
         userDTO.setImageUrl("http://placehold.it/50x50");
         userDTO.setLangKey(Constants.DEFAULT_LANGUAGE);
+        userDTO.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        userDTO.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
 
         restAccountMockMvc.perform(
@@ -516,6 +558,8 @@ public class AccountResourceIT {
         User user = new User();
         user.setLogin("save-existing-email");
         user.setEmail("save-existing-email@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         user.setPassword(RandomStringUtils.random(60));
         user.setActivated(true);
 
@@ -524,6 +568,8 @@ public class AccountResourceIT {
         User anotherUser = new User();
         anotherUser.setLogin("save-existing-email2");
         anotherUser.setEmail("save-existing-email2@example.com");
+        anotherUser.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        anotherUser.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         anotherUser.setPassword(RandomStringUtils.random(60));
         anotherUser.setActivated(true);
 
@@ -537,6 +583,8 @@ public class AccountResourceIT {
         userDTO.setActivated(false);
         userDTO.setImageUrl("http://placehold.it/50x50");
         userDTO.setLangKey(Constants.DEFAULT_LANGUAGE);
+        userDTO.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        userDTO.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
 
         restAccountMockMvc.perform(
@@ -557,6 +605,8 @@ public class AccountResourceIT {
         User user = new User();
         user.setLogin("save-existing-email-and-login");
         user.setEmail("save-existing-email-and-login@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         user.setPassword(RandomStringUtils.random(60));
         user.setActivated(true);
 
@@ -570,6 +620,8 @@ public class AccountResourceIT {
         userDTO.setActivated(false);
         userDTO.setImageUrl("http://placehold.it/50x50");
         userDTO.setLangKey(Constants.DEFAULT_LANGUAGE);
+        userDTO.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        userDTO.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
 
         restAccountMockMvc.perform(
@@ -592,6 +644,8 @@ public class AccountResourceIT {
         user.setPassword(passwordEncoder.encode(currentPassword));
         user.setLogin("change-password-wrong-existing-password");
         user.setEmail("change-password-wrong-existing-password@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userRepository.saveAndFlush(user);
 
         restAccountMockMvc.perform(post("/api/account/change-password")
@@ -614,6 +668,8 @@ public class AccountResourceIT {
         user.setPassword(passwordEncoder.encode(currentPassword));
         user.setLogin("change-password");
         user.setEmail("change-password@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userRepository.saveAndFlush(user);
 
         restAccountMockMvc.perform(post("/api/account/change-password")
@@ -635,6 +691,8 @@ public class AccountResourceIT {
         user.setPassword(passwordEncoder.encode(currentPassword));
         user.setLogin("change-password-too-small");
         user.setEmail("change-password-too-small@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userRepository.saveAndFlush(user);
 
         String newPassword = RandomStringUtils.random(ManagedUserVM.PASSWORD_MIN_LENGTH - 1);
@@ -658,6 +716,8 @@ public class AccountResourceIT {
         user.setPassword(passwordEncoder.encode(currentPassword));
         user.setLogin("change-password-too-long");
         user.setEmail("change-password-too-long@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userRepository.saveAndFlush(user);
 
         String newPassword = RandomStringUtils.random(ManagedUserVM.PASSWORD_MAX_LENGTH + 1);
@@ -681,6 +741,8 @@ public class AccountResourceIT {
         user.setPassword(passwordEncoder.encode(currentPassword));
         user.setLogin("change-password-empty");
         user.setEmail("change-password-empty@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userRepository.saveAndFlush(user);
 
         restAccountMockMvc.perform(post("/api/account/change-password")
@@ -701,6 +763,8 @@ public class AccountResourceIT {
         user.setActivated(true);
         user.setLogin("password-reset");
         user.setEmail("password-reset@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userRepository.saveAndFlush(user);
 
         restAccountMockMvc.perform(post("/api/account/reset-password/init")
@@ -717,6 +781,8 @@ public class AccountResourceIT {
         user.setActivated(true);
         user.setLogin("password-reset");
         user.setEmail("password-reset@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userRepository.saveAndFlush(user);
 
         restAccountMockMvc.perform(post("/api/account/reset-password/init")
@@ -741,6 +807,8 @@ public class AccountResourceIT {
         user.setPassword(RandomStringUtils.random(60));
         user.setLogin("finish-password-reset");
         user.setEmail("finish-password-reset@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         user.setResetDate(Instant.now().plusSeconds(60));
         user.setResetKey("reset key");
         userRepository.saveAndFlush(user);
@@ -767,6 +835,8 @@ public class AccountResourceIT {
         user.setPassword(RandomStringUtils.random(60));
         user.setLogin("finish-password-reset-too-small");
         user.setEmail("finish-password-reset-too-small@example.com");
+        user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         user.setResetDate(Instant.now().plusSeconds(60));
         user.setResetKey("reset key too small");
         userRepository.saveAndFlush(user);

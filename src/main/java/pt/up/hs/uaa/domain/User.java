@@ -63,6 +63,13 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Column(length = 254, unique = true)
     private String email;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Size(max = 3)
+    @Column(name = "country", length = 3)
+    private String country;
+
     @NotNull
     @Column(nullable = false)
     private boolean activated = false;
@@ -71,9 +78,13 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Column(name = "lang_key", length = 10)
     private String langKey;
 
-    @Size(max = 256)
-    @Column(name = "image_url", length = 256)
-    private String imageUrl;
+    @Column(name = "length_unit", length = 2)
+    @Enumerated(EnumType.STRING)
+    private LengthUnit lengthUnit;
+
+    @Column(name = "time_unit", length = 2)
+    @Enumerated(EnumType.STRING)
+    private TimeUnit timeUnit;
 
     @Size(max = 20)
     @Column(name = "activation_key", length = 20)
@@ -177,6 +188,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.imageUrl = imageUrl;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     public boolean getActivated() {
         return activated;
     }
@@ -215,6 +234,22 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setLangKey(String langKey) {
         this.langKey = langKey;
+    }
+
+    public LengthUnit getLengthUnit() {
+        return lengthUnit;
+    }
+
+    public void setLengthUnit(LengthUnit lengthUnit) {
+        this.lengthUnit = lengthUnit;
+    }
+
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
+    }
+
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
     }
 
     public Set<Authority> getAuthorities() {
@@ -274,8 +309,11 @@ public class User extends AbstractAuditingEntity implements Serializable {
             ", organization='" + organization + '\'' +
             ", email='" + email + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
+            ", country='" + country + '\'' +
             ", activated='" + activated + '\'' +
             ", langKey='" + langKey + '\'' +
+            ", lengthUnit='" + lengthUnit + '\'' +
+            ", timeUnit='" + timeUnit + '\'' +
             ", activationKey='" + activationKey + '\'' +
             ", googleId='" + googleId + '\'' +
             ", twitterId='" + twitterId + '\'' +

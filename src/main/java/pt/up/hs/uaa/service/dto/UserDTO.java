@@ -3,6 +3,8 @@ package pt.up.hs.uaa.service.dto;
 import pt.up.hs.uaa.config.Constants;
 
 import pt.up.hs.uaa.domain.Authority;
+import pt.up.hs.uaa.domain.LengthUnit;
+import pt.up.hs.uaa.domain.TimeUnit;
 import pt.up.hs.uaa.domain.User;
 
 import javax.validation.constraints.*;
@@ -35,13 +37,19 @@ public class UserDTO {
     @Size(min = 5, max = 254)
     private String email;
 
-    @Size(max = 256)
     private String imageUrl;
 
     private boolean activated = false;
 
+    @Size(max = 3)
+    private String country;
+
     @Size(min = 2, max = 10)
     private String langKey;
+
+    private LengthUnit lengthUnit;
+
+    private TimeUnit timeUnit;
 
     private String createdBy;
 
@@ -64,9 +72,12 @@ public class UserDTO {
         this.lastName = user.getLastName();
         this.organization = user.getOrganization();
         this.email = user.getEmail();
-        this.activated = user.getActivated();
         this.imageUrl = user.getImageUrl();
+        this.country = user.getCountry();
+        this.activated = user.getActivated();
         this.langKey = user.getLangKey();
+        this.lengthUnit = user.getLengthUnit();
+        this.timeUnit = user.getTimeUnit();
         this.createdBy = user.getCreatedBy();
         this.createdDate = user.getCreatedDate();
         this.lastModifiedBy = user.getLastModifiedBy();
@@ -132,6 +143,14 @@ public class UserDTO {
         this.imageUrl = imageUrl;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     public boolean isActivated() {
         return activated;
     }
@@ -146,6 +165,22 @@ public class UserDTO {
 
     public void setLangKey(String langKey) {
         this.langKey = langKey;
+    }
+
+    public LengthUnit getLengthUnit() {
+        return lengthUnit;
+    }
+
+    public void setLengthUnit(LengthUnit lengthUnit) {
+        this.lengthUnit = lengthUnit;
+    }
+
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
+    }
+
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
     }
 
     public String getCreatedBy() {
@@ -197,6 +232,7 @@ public class UserDTO {
             ", email='" + email + '\'' +
             ", organization='" + organization + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
+            ", country='" + country + '\'' +
             ", activated=" + activated +
             ", langKey='" + langKey + '\'' +
             ", createdBy=" + createdBy +

@@ -1,6 +1,7 @@
 package pt.up.hs.uaa.security;
 
 import pt.up.hs.uaa.UaaApp;
+import pt.up.hs.uaa.config.Constants;
 import pt.up.hs.uaa.domain.User;
 import pt.up.hs.uaa.repository.UserRepository;
 
@@ -52,6 +53,8 @@ public class DomainUserDetailsServiceIT {
         userOne.setFirstName("userOne");
         userOne.setLastName("doe");
         userOne.setLangKey("en");
+        userOne.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        userOne.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userRepository.save(userOne);
 
         userTwo = new User();
@@ -62,6 +65,8 @@ public class DomainUserDetailsServiceIT {
         userTwo.setFirstName("userTwo");
         userTwo.setLastName("doe");
         userTwo.setLangKey("en");
+        userTwo.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        userTwo.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userRepository.save(userTwo);
 
         userThree = new User();
@@ -72,6 +77,8 @@ public class DomainUserDetailsServiceIT {
         userThree.setFirstName("userThree");
         userThree.setLastName("doe");
         userThree.setLangKey("en");
+        userThree.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        userThree.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
         userRepository.save(userThree);
     }
 

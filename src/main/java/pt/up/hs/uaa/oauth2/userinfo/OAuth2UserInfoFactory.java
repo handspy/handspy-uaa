@@ -3,7 +3,6 @@ package pt.up.hs.uaa.oauth2.userinfo;
 import pt.up.hs.uaa.oauth2.OAuth2Provider;
 import pt.up.hs.uaa.web.rest.errors.OAuth2AuthenticationException;
 
-import java.security.AuthProvider;
 import java.util.Map;
 
 public class OAuth2UserInfoFactory {

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <!--
+        Changed type of column image_url to varchar in the entity User.
+        Added column country in the entity User.
+    -->
+    <changeSet id="20200814180000-1" author="jhipster">
+        <modifyDataType tableName="hs_user" columnName="image_url" newDataType="varchar" />
+        <addColumn tableName="hs_user">
+            <column name="country" type="varchar(3)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

@@ -2,6 +2,8 @@ package pt.up.hs.uaa.service;
 
 import pt.up.hs.uaa.config.Constants;
 import pt.up.hs.uaa.domain.Authority;
+import pt.up.hs.uaa.domain.LengthUnit;
+import pt.up.hs.uaa.domain.TimeUnit;
 import pt.up.hs.uaa.domain.User;
 import pt.up.hs.uaa.repository.AuthorityRepository;
 import pt.up.hs.uaa.repository.UserRepository;
@@ -115,8 +117,19 @@ public class UserService {
         if (userDTO.getEmail() != null) {
             newUser.setEmail(userDTO.getEmail().toLowerCase());
         }
+        newUser.setCountry(userDTO.getCountry());
         newUser.setImageUrl(userDTO.getImageUrl());
         newUser.setLangKey(userDTO.getLangKey());
+        if (userDTO.getLengthUnit() == null) {
+            newUser.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        } else {
+            newUser.setLengthUnit(userDTO.getLengthUnit());
+        }
+        if (userDTO.getTimeUnit() == null) {
+            newUser.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
+        } else {
+            newUser.setTimeUnit(userDTO.getTimeUnit());
+        }
         // new user is not active
         newUser.setActivated(false);
         // new user gets registration key
@@ -149,11 +162,22 @@ public class UserService {
         if (userDTO.getEmail() != null) {
             user.setEmail(userDTO.getEmail().toLowerCase());
         }
+        user.setCountry(userDTO.getCountry());
         user.setImageUrl(userDTO.getImageUrl());
         if (userDTO.getLangKey() == null) {
             user.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
         } else {
             user.setLangKey(userDTO.getLangKey());
+        }
+        if (userDTO.getLengthUnit() == null) {
+            user.setLengthUnit(Constants.DEFAULT_LENGTH_UNIT);
+        } else {
+            user.setLengthUnit(userDTO.getLengthUnit());
+        }
+        if (userDTO.getTimeUnit() == null) {
+            user.setTimeUnit(Constants.DEFAULT_TIME_UNIT);
+        } else {
+            user.setTimeUnit(userDTO.getTimeUnit());
         }
         String encryptedPassword = passwordEncoder.encode(RandomUtil.generatePassword());
         user.setPassword(encryptedPassword);
@@ -181,10 +205,22 @@ public class UserService {
      * @param lastName          last name of user.
      * @param organization      organization of user.
      * @param email             email id of user.
+     * @param country           country of user.
      * @param langKey           language key.
+     * @param lengthUnit        preferred length unit.
+     * @param timeUnit          preferred time unit.
      * @param imageUrl          image URL of user.
      */
-    public void updateUser(String firstName, String lastName, String organization, String email, String langKey, String imageUrl) {
+    public void updateUser(
+        String firstName, String lastName,
+        String organization,
+        String email,
+        String country,
+        String langKey,
+        LengthUnit lengthUnit,
+        TimeUnit timeUnit,
+        String imageUrl
+    ) {
         SecurityUtils.getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
             .ifPresent(user -> {
@@ -194,7 +230,10 @@ public class UserService {
                 if (email != null) {
                     user.setEmail(email.toLowerCase());
                 }
+                user.setCountry(country);
                 user.setLangKey(langKey);
+                user.setLengthUnit(lengthUnit);
+                user.setTimeUnit(timeUnit);
                 user.setImageUrl(imageUrl);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
@@ -221,9 +260,12 @@ public class UserService {
                 if (userDTO.getEmail() != null) {
                     user.setEmail(userDTO.getEmail().toLowerCase());
                 }
+                user.setCountry(userDTO.getCountry());
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());
                 user.setLangKey(userDTO.getLangKey());
+                user.setLengthUnit(userDTO.getLengthUnit());
+                user.setTimeUnit(userDTO.getTimeUnit());
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
                 userDTO.getAuthorities().stream()
@@ -304,7 +346,6 @@ public class UserService {
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
     }
-
 
     private void clearUserCaches(User user) {
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evict(user.getLogin());

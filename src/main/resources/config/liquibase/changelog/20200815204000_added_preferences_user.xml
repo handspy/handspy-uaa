@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <!--
+        Added column length unit in the entity User.
+        Added column time unit in the entity User.
+    -->
+    <changeSet id="20200815204000-1" author="jhipster">
+        <addColumn tableName="hs_user">
+            <column name="length_unit" type="varchar(2)" defaultValue="MM">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="hs_user">
+            <column name="time_unit" type="varchar(2)" defaultValue="MS">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

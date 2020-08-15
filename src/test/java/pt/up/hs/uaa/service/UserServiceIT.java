@@ -2,6 +2,8 @@ package pt.up.hs.uaa.service;
 
 import pt.up.hs.uaa.UaaApp;
 import pt.up.hs.uaa.config.Constants;
+import pt.up.hs.uaa.domain.LengthUnit;
+import pt.up.hs.uaa.domain.TimeUnit;
 import pt.up.hs.uaa.domain.User;
 import pt.up.hs.uaa.repository.UserRepository;
 import pt.up.hs.uaa.service.dto.UserDTO;
@@ -48,6 +50,10 @@ public class UserServiceIT {
 
     private static final String DEFAULT_LANGKEY = "dummy";
 
+    private static final LengthUnit DEFAULT_LENGTH_UNIT = LengthUnit.MM;
+
+    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MS;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -73,6 +79,8 @@ public class UserServiceIT {
         user.setLastName(DEFAULT_LASTNAME);
         user.setImageUrl(DEFAULT_IMAGEURL);
         user.setLangKey(DEFAULT_LANGKEY);
+        user.setLengthUnit(DEFAULT_LENGTH_UNIT);
+        user.setTimeUnit(DEFAULT_TIME_UNIT);
 
         when(dateTimeProvider.getNow()).thenReturn(Optional.of(LocalDateTime.now()));
         auditingHandler.setDateTimeProvider(dateTimeProvider);
