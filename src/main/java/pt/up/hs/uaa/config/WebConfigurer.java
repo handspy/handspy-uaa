@@ -5,14 +5,17 @@ import io.github.jhipster.config.JHipsterProperties;
 import io.github.jhipster.config.h2.H2ConfigurationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import pt.up.hs.uaa.web.rest.response.ResponseBodyWrapperMappingJackson2;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -56,6 +59,13 @@ public class WebConfigurer implements ServletContextInitializer {
             source.registerCorsConfiguration("/v2/api-docs", config);
         }
         return new CorsFilter(source);
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplateBuilder()
+            .additionalMessageConverters(new ResponseBodyWrapperMappingJackson2())
+            .build();
     }
 
     /**

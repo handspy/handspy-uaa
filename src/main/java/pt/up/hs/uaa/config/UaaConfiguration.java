@@ -1,10 +1,5 @@
 package pt.up.hs.uaa.config;
 
-import pt.up.hs.uaa.oauth2.CustomOAuth2UserService;
-import pt.up.hs.uaa.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import pt.up.hs.uaa.oauth2.OAuth2AuthenticationFailureHandler;
-import pt.up.hs.uaa.oauth2.OAuth2AuthenticationSuccessHandler;
-import pt.up.hs.uaa.security.AuthoritiesConstants;
 import io.github.jhipster.config.JHipsterProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +29,11 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
+import pt.up.hs.uaa.oauth2.CustomOAuth2UserService;
+import pt.up.hs.uaa.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import pt.up.hs.uaa.oauth2.OAuth2AuthenticationFailureHandler;
+import pt.up.hs.uaa.oauth2.OAuth2AuthenticationSuccessHandler;
+import pt.up.hs.uaa.security.AuthoritiesConstants;
 
 import javax.servlet.http.HttpServletResponse;
 import java.security.KeyPair;
@@ -64,8 +64,8 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
 
         private final CorsFilter corsFilter;
 
-        private CustomOAuth2UserService customOAuth2UserService;
-        private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+        private final CustomOAuth2UserService customOAuth2UserService;
+        private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
         private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
         private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 

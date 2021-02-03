@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title th:text="#{project.invitation.title(${project.title}, ${user.firstName}, ${user.lastName})}"></title>
+        <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}" />
+
+        <style type="text/css">
+            @import url("//fonts.googleapis.com/css?family=Roboto:300, 400, 700");
+            body {
+                font-family: "Roboto", sans-serif;
+                font-weight: 400;
+                line-height: 1.5;
+            }
+            .body-wrap {
+                margin: auto;
+            }
+            .header {
+                background-color: #6aa84f;
+                padding: 10px;
+            }
+            .header .logo {
+                width: 96px;
+            }
+            .content {
+                background-color: #FFFFFF;
+                padding: 20px 20px;
+            }
+            .content p {
+                margin-block-start: 1em;
+                margin-block-end: 1em;
+                margin-inline-start: 0;
+                margin-inline-end: 0;
+            }
+            .content .greetings {
+                padding-top: 40px;
+            }
+            .footer {
+                padding: 10px 20px;
+                background-color: #6aa84f;
+                color: #FFFFFF !important;
+                font-size: 0.85em;
+            }
+            a {
+                text-decoration: none;
+                font-weight: 700;
+            }
+            a.btn-primary {
+                background-color: #589445;
+                color: #FFFFFF !important;
+                padding: 20px 35px;
+                margin: 20px auto;
+                border-radius: 2px;
+                font-size: 1.2em;
+                text-decoration: none;
+                font-weight: bold;
+                display: inline-block;
+                text-transform: uppercase;
+            }
+            .text-primary {
+                color: #212121;
+            }
+            .text-secondary {
+                color: #FFFFFF !important;
+            }
+            .text-center {
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="text-primary" itemscope="" itemtype="http://schema.org/EmailMessage">
+    <table class="body-wrap">
+        <tr>
+            <td></td>
+            <td class="container" width="600">
+                <div class="header">
+                    <table width="100%">
+                        <tr>
+                            <td class="content-block">
+                                <img class="logo" th:src="|cid:${logo}|" alt="HandSpy Logo" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="content">
+                    <table class="main" width="100%" cellpadding="0" cellspacing="0" itemprop="action" itemscope="" itemtype="http://schema.org/ConfirmAction">
+                        <tr>
+                            <td class="content-wrap">
+                                <meta itemprop="name" content="Confirm Email" />
+                                <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td class="content-block">
+                                            <p th:text="#{email.global.greeting(${user.firstName}, ${user.lastName})}"></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="content-block">
+                                            <p th:text="#{email.activation.text1}"></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="content-block">
+                                            <p th:text="#{email.activation.text2}"></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="content-block text-center" itemprop="handler" itemscope="" itemtype="http://schema.org/HttpActionHandler">
+                                            <a class="btn-primary text-secondary"
+                                               th:with="url=(@{|${baseUrl}/account/activate?key=${user.activationKey}|})"
+                                               th:href="${url}"
+                                               th:text="#{email.activation.button}"
+                                               itemprop="url"
+                                            ></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="content-block">
+                                            <p th:text="#{email.activation.text3}"></p>
+                                            <p th:text="#{email.activation.text4}"></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="content-block greetings">
+                                            <p>
+                                                <span th:text="#{email.global.goodbye}"></span>
+                                                <br/>
+                                                <span th:text="#{email.global.signature}"></span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="footer">
+                    <table width="100%">
+                        <tr>
+                            <td class="content-block text-center text-secondary">
+                                <span th:text="#{email.global.social}"></span>
+                                <a class="text-secondary" href="http://twitter.com/handspy-up">@handspy-up</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+    </body>
+</html>

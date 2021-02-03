@@ -1,7 +1,10 @@
 package pt.up.hs.uaa.web.rest;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import pt.up.hs.uaa.domain.User;
 import pt.up.hs.uaa.repository.UserRepository;
+import pt.up.hs.uaa.security.AuthoritiesConstants;
 import pt.up.hs.uaa.security.SecurityUtils;
 import pt.up.hs.uaa.service.MailService;
 import pt.up.hs.uaa.service.UserService;
@@ -106,10 +109,33 @@ public class AccountResource {
      * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
      */
     @GetMapping("/account")
+    @PreAuthorize("hasAnyAuthority(\"" +
+        AuthoritiesConstants.ADMIN + "\", \"" +
+        AuthoritiesConstants.ADVANCED_USER + "\", \"" +
+        AuthoritiesConstants.USER + "\", \"" +
+        AuthoritiesConstants.GUEST +
+    "\")")
     public UserDTO getAccount() {
         return userService.getUserWithAuthorities()
             .map(UserDTO::new)
             .orElseThrow(() -> new AccountResourceException("User could not be found"));
+    }
+
+    /**
+     * {@code GET  /connections} : get the connections of the current user.
+     *
+     * @return the connections of the current user.
+     * @throws RuntimeException {@code 500 (Internal Server Error)} if the connections couldn't be returned.
+     */
+    @GetMapping("/connections")
+    @PreAuthorize("hasAnyAuthority(\"" +
+        AuthoritiesConstants.ADMIN + "\", \"" +
+        AuthoritiesConstants.ADVANCED_USER + "\", \"" +
+        AuthoritiesConstants.USER + "\", \"" +
+        AuthoritiesConstants.GUEST +
+        "\")")
+    public ResponseEntity<List<UserDTO>> getConnections() {
+        return ResponseEntity.ok(userService.getConnections());
     }
 
     /**
@@ -120,6 +146,12 @@ public class AccountResource {
      * @throws RuntimeException {@code 500 (Internal Server Error)} if the user login wasn't found.
      */
     @PostMapping("/account")
+    @PreAuthorize("hasAnyAuthority(\"" +
+        AuthoritiesConstants.ADMIN + "\", \"" +
+        AuthoritiesConstants.ADVANCED_USER + "\", \"" +
+        AuthoritiesConstants.USER + "\", \"" +
+        AuthoritiesConstants.GUEST +
+    "\")")
     public void saveAccount(@Valid @RequestBody UserDTO userDTO) {
         String userLogin = SecurityUtils.getCurrentUserLogin()
             .orElseThrow(() -> new AccountResourceException("Current user login not found"));

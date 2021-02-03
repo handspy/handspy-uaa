@@ -1,13 +1,15 @@
 package pt.up.hs.uaa.service.dto;
 
 import pt.up.hs.uaa.config.Constants;
-
 import pt.up.hs.uaa.domain.Authority;
 import pt.up.hs.uaa.domain.LengthUnit;
 import pt.up.hs.uaa.domain.TimeUnit;
 import pt.up.hs.uaa.domain.User;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;

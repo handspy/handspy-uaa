@@ -1,5 +1,13 @@
 package pt.up.hs.uaa.web.rest;
 
+import io.github.jhipster.web.util.HeaderUtil;
+import io.github.jhipster.web.util.ResponseUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import pt.up.hs.uaa.config.Constants;
 import pt.up.hs.uaa.domain.User;
 import pt.up.hs.uaa.repository.UserRepository;
@@ -7,30 +15,19 @@ import pt.up.hs.uaa.security.AuthoritiesConstants;
 import pt.up.hs.uaa.service.MailService;
 import pt.up.hs.uaa.service.UserService;
 import pt.up.hs.uaa.service.dto.UserDTO;
+import pt.up.hs.uaa.service.util.SearchCriteria;
 import pt.up.hs.uaa.web.rest.errors.BadRequestAlertException;
 import pt.up.hs.uaa.web.rest.errors.EmailAlreadyUsedException;
 import pt.up.hs.uaa.web.rest.errors.LoginAlreadyUsedException;
 
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * REST controller for managing users.
@@ -86,11 +83,11 @@ public class UserResource {
      *
      * @param userDTO the user to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new user, or with status {@code 400 (Bad Request)} if the login or email is already in use.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * @throws URISyntaxException       if the Location URI syntax is incorrect.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the login or email is already in use.
      */
     @PostMapping("/users")
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
         log.debug("REST request to save User : {}", userDTO);
 
@@ -105,7 +102,7 @@ public class UserResource {
             User newUser = userService.createUser(userDTO);
             mailService.sendCreationEmail(newUser);
             return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
-                .headers(HeaderUtil.createAlert(applicationName,  "userManagement.created", newUser.getLogin()))
+                .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUser.getLogin()))
                 .body(newUser);
         }
     }
@@ -119,7 +116,7 @@ public class UserResource {
      * @throws LoginAlreadyUsedException {@code 400 (Bad Request)} if the login is already in use.
      */
     @PutMapping("/users")
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO) {
         log.debug("REST request to update User : {}", userDTO);
         Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
@@ -139,22 +136,71 @@ public class UserResource {
     /**
      * {@code GET /users} : get all users.
      *
-     * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body all users.
      */
     @GetMapping("/users")
-    public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
-        final Page<UserDTO> page = userService.getAllManagedUsers(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    @PreAuthorize("hasAnyAuthority(\"" +
+        AuthoritiesConstants.ADMIN + "\", \"" +
+        AuthoritiesConstants.ADVANCED_USER + "\", \"" +
+        AuthoritiesConstants.USER + "\", \"" +
+        "\")")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        final List<UserDTO> users = userService.findAllUsers();
+        return ResponseEntity.ok(users);
     }
 
     /**
+     * {@code GET  /project-users/:id} : get the users of the project.
+     *
+     * @param id the id of the project.
+     * @return the users of the project.
+     * @throws RuntimeException {@code 500 (Internal Server Error)} if the project users couldn't be returned.
+     */
+    @GetMapping("/project-users/{id}")
+    @PreAuthorize("hasAnyAuthority(\"" +
+        AuthoritiesConstants.ADMIN + "\", \"" +
+        AuthoritiesConstants.ADVANCED_USER + "\", \"" +
+        AuthoritiesConstants.USER + "\", \"" +
+        AuthoritiesConstants.GUEST +
+        "\")")
+    public ResponseEntity<List<UserDTO>> getProjectUsers(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUsersInProject(id));
+    }
+
+    /**
+     * {@code GET /user-search} : search users with query string.
+     *
+     * @param search the query string.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body all users.
+     */
+    /*@GetMapping("/user-search")
+    @PreAuthorize(
+        "hasAnyAuthority(\"" +
+            AuthoritiesConstants.GUEST + "\", \"" +
+            AuthoritiesConstants.USER + "\", \"" +
+            AuthoritiesConstants.ADVANCED_USER + "\", \"" +
+            AuthoritiesConstants.ADMIN +
+        "\")"
+    )
+    public ResponseEntity<List<UserDTO>> search(@RequestParam(value = "search", required = false) String search) {
+        List<SearchCriteria> params = new ArrayList<>();
+        if (search != null) {
+            Pattern pattern = Pattern.compile("(\\w+?)([:<>])(\\w+?),");
+            Matcher matcher = pattern.matcher(search + ",");
+            while (matcher.find()) {
+                params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+            }
+        }
+        return ResponseEntity.ok(userService.searchUsers(params));
+    }*/
+
+    /**
      * Gets a list of all roles.
+     *
      * @return a string list of all roles.
      */
     @GetMapping("/users/authorities")
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public List<String> getAuthorities() {
         return userService.getAuthorities();
     }
@@ -166,11 +212,12 @@ public class UserResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the "login" user, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<UserDTO> getUser(@PathVariable String login) {
         log.debug("REST request to get User : {}", login);
         return ResponseUtil.wrapOrNotFound(
-            userService.getUserWithAuthoritiesByLogin(login)
-                .map(UserDTO::new));
+            userService.getUserWithAuthoritiesByLogin(login).map(UserDTO::new)
+        );
     }
 
     /**
@@ -180,12 +227,12 @@ public class UserResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUser(login);
         return ResponseEntity.noContent()
-            .headers(HeaderUtil.createAlert(applicationName,  "userManagement.deleted", login))
+            .headers(HeaderUtil.createAlert(applicationName, "userManagement.deleted", login))
             .build();
     }
 }

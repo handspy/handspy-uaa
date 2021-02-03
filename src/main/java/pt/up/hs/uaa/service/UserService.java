@@ -1,6 +1,20 @@
 package pt.up.hs.uaa.service;
 
+import io.github.jhipster.security.RandomUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.CacheManager;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.zalando.problem.Status;
+import pt.up.hs.uaa.client.project.ProjectMicroService;
+import pt.up.hs.uaa.client.project.dto.ProjectPermissionsDTO;
 import pt.up.hs.uaa.config.Constants;
+import pt.up.hs.uaa.constants.EntityNames;
+import pt.up.hs.uaa.constants.ErrorKeys;
 import pt.up.hs.uaa.domain.Authority;
 import pt.up.hs.uaa.domain.LengthUnit;
 import pt.up.hs.uaa.domain.TimeUnit;
@@ -10,22 +24,13 @@ import pt.up.hs.uaa.repository.UserRepository;
 import pt.up.hs.uaa.security.AuthoritiesConstants;
 import pt.up.hs.uaa.security.SecurityUtils;
 import pt.up.hs.uaa.service.dto.UserDTO;
-
-import io.github.jhipster.security.RandomUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.CacheManager;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import pt.up.hs.uaa.service.exceptions.ServiceException;
+import pt.up.hs.uaa.service.util.SearchCriteria;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -38,18 +43,26 @@ public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+    private final AuthorityRepository authorityRepository;
 
     private final PasswordEncoder passwordEncoder;
 
-    private final AuthorityRepository authorityRepository;
-
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    private final ProjectMicroService projectMicroService;
+
+    public UserService(
+        UserRepository userRepository,
+        PasswordEncoder passwordEncoder,
+        AuthorityRepository authorityRepository,
+        CacheManager cacheManager,
+        ProjectMicroService projectMicroService
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.projectMicroService = projectMicroService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -304,8 +317,102 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
-        return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+    public List<UserDTO> findAllUsers() {
+        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            return getAllManagedUsers();
+        }
+        Optional<String> optCurrentUserLogin = SecurityUtils.getCurrentUserLogin();
+        if (!optCurrentUserLogin.isPresent()) {
+            return new ArrayList<>();
+        }
+        String currentUserLogin = optCurrentUserLogin.get();
+        Map<String, UserDTO> users = getAllManagedUsers().parallelStream()
+            .collect(Collectors.toMap(UserDTO::getLogin, Function.identity()));
+        List<String> userConnections = projectMicroService
+            .userConnections(currentUserLogin);
+        return users.entrySet().parallelStream()
+            .filter(user -> !user.getKey().equals(Constants.SYSTEM_ACCOUNT))
+            .map(e -> {
+                if (userConnections.contains(e.getKey()) || e.getKey().equals(currentUserLogin)) {
+                    return e.getValue();
+                }
+                UserDTO userDTO = new UserDTO();
+                userDTO.setId(e.getValue().getId());
+                userDTO.setLogin(e.getValue().getLogin());
+                return userDTO;
+            })
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDTO> getAllManagedUsers() {
+        return userRepository
+            .findAllByLoginNot(Constants.ANONYMOUS_USER).stream()
+            .map(UserDTO::new)
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDTO> searchUsers(List<SearchCriteria> params) {
+        Optional<String> optCurrentUserLogin = SecurityUtils.getCurrentUserLogin();
+        if (!optCurrentUserLogin.isPresent()) {
+            return new ArrayList<>();
+        }
+        String currentUserLogin = optCurrentUserLogin.get();
+        Map<String, User> users = userRepository.search(params).parallelStream()
+            .collect(Collectors.toMap(User::getLogin, Function.identity()));
+        List<String> userConnections = projectMicroService
+            .userConnections(currentUserLogin);
+        return users.entrySet().parallelStream()
+            .map(e -> {
+                if (userConnections.contains(e.getKey())) {
+                    return new UserDTO(e.getValue());
+                }
+                UserDTO userDTO = new UserDTO();
+                userDTO.setId(e.getValue().getId());
+                userDTO.setLogin(e.getValue().getLogin());
+                return userDTO;
+            })
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDTO> getConnections() {
+        Optional<String> optCurrentUserLogin = SecurityUtils.getCurrentUserLogin();
+        if (!optCurrentUserLogin.isPresent()) {
+            return new ArrayList<>();
+        }
+        String currentUserLogin = optCurrentUserLogin.get();
+        List<String> userConnections = projectMicroService
+            .userConnections(currentUserLogin);
+        return userRepository.findAllByLoginIsIn(userConnections).stream()
+            .map(UserDTO::new)
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDTO> getUsersInProject(Long projectId) {
+        Optional<String> optCurrentUserLogin = SecurityUtils.getCurrentUserLogin();
+        if (!optCurrentUserLogin.isPresent()) {
+            return new ArrayList<>();
+        }
+        String currentUserLogin = optCurrentUserLogin.get();
+        List<ProjectPermissionsDTO> projectPermissions = projectMicroService
+            .projectPermissions(projectId);
+        boolean allowed = projectPermissions.parallelStream()
+            .anyMatch(projectPermission ->
+                projectPermission.getUser().equals(currentUserLogin) &&
+                    !projectPermission.getPermissions().isEmpty()
+            );
+        if (!allowed) {
+            throw new ServiceException(Status.FORBIDDEN, EntityNames.USER, ErrorKeys.ERR_PERMISSION_NOT_AVAILABLE, "Not allowed to perform this operation.");
+        }
+        List<String> users = projectPermissions.parallelStream()
+            .map(ProjectPermissionsDTO::getUser)
+            .collect(Collectors.toList());
+        return userRepository.findAllByLoginIsIn(users).stream()
+            .map(UserDTO::new)
+            .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
