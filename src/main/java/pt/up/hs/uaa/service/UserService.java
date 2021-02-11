@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 import org.zalando.problem.Status;
 import pt.up.hs.uaa.client.project.ProjectMicroService;
 import pt.up.hs.uaa.client.project.dto.ProjectPermissionsDTO;
@@ -32,6 +31,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static pt.up.hs.uaa.config.Constants.INTERNAL_CLIENT_ID;
 
 /**
  * Service class for managing users.
@@ -107,6 +108,9 @@ public class UserService {
     }
 
     public User registerUser(UserDTO userDTO, String password) {
+        if (userDTO.getLogin().equalsIgnoreCase(INTERNAL_CLIENT_ID)) {
+            throw new UsernameAlreadyUsedException();
+        }
         userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).ifPresent(existingUser -> {
             boolean removed = removeNonActivatedUser(existingUser);
             if (!removed) {
@@ -167,6 +171,9 @@ public class UserService {
     }
 
     public User createUser(UserDTO userDTO) {
+        if (userDTO.getLogin().equalsIgnoreCase(INTERNAL_CLIENT_ID)) {
+            throw new UsernameAlreadyUsedException();
+        }
         User user = new User();
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
